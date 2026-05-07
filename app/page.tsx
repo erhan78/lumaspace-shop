@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 export default async function Home() {
   const [products, categories] = await Promise.all([
     prisma.product.findMany({ where: { active: true } }),
+    
     prisma.product.findMany({
       where: { active: true },
       distinct: ["category"],
