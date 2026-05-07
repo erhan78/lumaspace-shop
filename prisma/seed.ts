@@ -66,10 +66,24 @@ const products = [
 ];
 
 async function main() {
-  
-  
-}
-main()
+  for (const product of products) {
+    const createdProduct = await prisma.product.create({
+      data: {
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl,
+        category: product.category,
+        variants: { create: product.variants },
+      },
+    });
+    console.log(`Produkt erstellt: ${createdProduct.name}`);
+  }
+
+  console.log(`Datenbank erfolgreich mit ${products.length} Produkten gefüllt.`);}
+
+
+  main()
   .then(async () => {
     await prisma.$disconnect();
     await pool.end();
