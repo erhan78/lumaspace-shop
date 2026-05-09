@@ -67,11 +67,13 @@ const products = [
 
 async function main() {
   //Datenbank leeren vor seed
-  prisma.cartItem.deleteMany()
-  prisma.orderItem.deleteMany()
-  prisma.order.deleteMany()
-  prisma.productVariant.deleteMany()
-  prisma.product.deleteMany()
+  await prisma.$transaction([
+    prisma.orderItem.deleteMany(),
+    prisma.order.deleteMany(),
+    prisma.cartItem.deleteMany(),
+    prisma.productVariant.deleteMany(),
+    prisma.product.deleteMany(),
+  ]);1
   // Produkte aus products werden hinzugefügt
   // npx prisma db seed 
   for (const product of products) {

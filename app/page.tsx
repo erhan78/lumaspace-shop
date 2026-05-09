@@ -1,28 +1,62 @@
 import { prisma } from "@/lib/prisma";
 
+const eur = new Intl.NumberFormat("de-DE", {
+  style: "currency",
+  currency: "EUR",
+});
+
 export default async function Home() {
-  const [products, categories] = await Promise.all([
-    prisma.product.findMany({ where: { active: true } }),
-    
-    prisma.product.findMany({
-      where: { active: true },
-      distinct: ["category"],
-      select: { category: true },
-    }),
-  ]);
+  // Alle aktiven Produkte mit Varianten abrufen
+  const products = await prisma.product.findMany({
+    where: { active: true },
+    orderBy: { createdAt: "desc" },
+    include: {
+      variants: { select: { stock: true } },
+    },
+  });
 
   return (
-    <main className="min-h-screen bg-bg text-ink p-12">
-      <h1 className="font-display text-6xl font-light">Lumaspace</h1>
+    <main>
+      <h1>Lumaspace</h1>
 
-      <div className="mt-8 text-ink-3">
-        <p>Anzahl Produkte: {products.length}</p>
-        <p>Anzahl Kategorien: {categories.length}</p>
-        {products[0] && (
-          <p className="mt-2">Erstes Produkt: {products[0].name}</p>
-        )}
-        {categories[0] && <p>Erste Kategorie: {categories[0].category}</p>}
-      </div>
+      {products.length === 0 ? (
+        <p>Keine Produkte. Lauf <code>npx prisma db seed</code>.
+         </p>
+        ) : (
+        <ul className="grid gap-8 xl:grid-cols-4">
+          {products.map((p) => {
+            const totalStock = p.variants.reduce((s, v) => s + v.stock, 0);
+            const soldOut = totalStock === 0;
+            return (
+              <li key={p.id}>
+
+                <div>
+                  <img
+                    src={p.imageUrl}
+                    alt={p.name}
+                  />
+                </div>
+                <div>
+                  <p>
+                    {p.category}
+                  </p>
+                  <h2 className="mt-1 font-display text-xl font-light">
+                    {p.name}
+                  </h2>
+                  <p>
+                    {eur.format(Number(p.price))}
+                  </p>
+                  {soldOut && (
+                    <p>
+                      Ausverkauft
+                    </p>
+                  )}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </main>
   );
 }
