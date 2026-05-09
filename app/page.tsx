@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 
 const eur = new Intl.NumberFormat("de-DE", {
@@ -29,29 +30,31 @@ export default async function Home() {
             const soldOut = totalStock === 0;
             return (
               <li key={p.id}>
-
-                <div>
-                  <img
-                    src={p.imageUrl}
-                    alt={p.name}
-                  />
-                </div>
-                <div>
-                  <p>
-                    {p.category}
-                  </p>
-                  <h2 className="mt-1 font-display text-xl font-light">
-                    {p.name}
-                  </h2>
-                  <p>
-                    {eur.format(Number(p.price))}
-                  </p>
-                  {soldOut && (
+                
+                <Link href={`/products/${p.id}`}>
+                  <div>
+                    <img
+                      src={p.imageUrl}
+                      alt={p.name}
+                    />
+                  </div>
+                  <div>
                     <p>
-                      Ausverkauft
+                      {p.category}
                     </p>
-                  )}
-                </div>
+                    <h2 className="mt-1 font-display text-xl font-light">
+                      {p.name}
+                    </h2>
+                    <p>
+                      {eur.format(Number(p.price))}
+                    </p>
+                    {soldOut && (
+                      <p>
+                        Ausverkauft
+                      </p>
+                    )}
+                  </div>
+                </Link>
               </li>
             );
           })}
