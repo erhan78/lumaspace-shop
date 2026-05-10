@@ -61,3 +61,53 @@ async function writeCartScope(): Promise<CartScope> {
 //MergeGuestCartIntoUser: Wenn sich ein Gast-Nutzer einloggt, werden seine Cart-Items mit seinem Nutzerkonto verbunden.
 
 
+//In DB suchen, was für Cart-Items zum aktuellen Scope gehören.
+export async function getCart() {
+  const scope = await readCartScope();
+  if (!scope) return [];
+  return prisma.cartItem.findMany({
+    where: scope,
+    include: { product: true, variant: true },
+    orderBy: { id: "asc" },
+  });
+}
+
+//Produkt zum Cart hinzufügen oder Menge erhöhen, wenn schon vorhanden.
+export async function addToCart({
+  productId,
+  variantId,
+  quantity,
+}: {
+  productId: string;
+  variantId: string | null;
+  quantity: number;
+}) {
+  const scope = await writeCartScope();
+
+  //Prüft, ob Item mit gleichem Produkt und Variante schon im Cart ist.
+  const existingItem = await prisma.cartItem.findFirst({
+    where: {
+      ...scope,
+      productId,
+      variantId,
+    },
+  });
+
+  if (existingItem) {
+    //Wenn ja, dann erhöhe die Menge.
+    await prisma.cartItem.update({
+      where: { id: existingItem.id },
+      data: { quantity: existingItem.quantity + quantity },
+    });
+  } else {
+    //Wenn nein, dann erstelle neues Cart-Item.
+    await prisma.cartItem.create({
+      data: {
+        ...scope,
+        productId,
+        variantId,
+        quantity,
+      },
+    });
+  }
+}
