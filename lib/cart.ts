@@ -111,3 +111,35 @@ export async function addToCart({
     });
   }
 }
+
+//Entfernt Item aus Cart.
+export async function removeFromCart(itemId: string) {
+  const scope = await readCartScope();
+  if (!scope) return;
+  await prisma.cartItem.deleteMany({
+    where: {
+      ...scope,
+      id: itemId,
+    },
+  });
+}
+
+//Setzt Menge eines Cart-Items oder entfernt es, wenn Menge 0 ist.
+export async function setCartItemQuantity(itemId: string, quantity: number) {
+  const scope = await readCartScope();
+  if (!scope) return;
+
+  if (quantity <= 0) {
+    //Wenn Menge 0 oder weniger, dann entferne Item.
+    await removeFromCart(itemId);
+  } else {
+    //Ansonsten setze neue Menge.
+    await prisma.cartItem.updateMany({
+      where: {
+        ...scope,
+        id: itemId,
+      },
+      data: { quantity },
+    });
+  }
+}
