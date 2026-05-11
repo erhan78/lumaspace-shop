@@ -1,5 +1,5 @@
 import { getCart } from "@/lib/cart";
-
+import Link from "next/link";
 
 export default async function CartPage() {
   const items = await getCart();
@@ -13,5 +13,21 @@ export default async function CartPage() {
     total += price * quantity;
   }
 
-  return <main></main>
+  return (
+  <main>
+    <a href="/">← Zurück</a>
+    
+    <h1>Warenkorb</h1>
+
+    //Wenn warenkorb leer ist.
+    {items.length === 0 && (
+        <p>
+          Dein Warenkorb ist leer.{" "}
+          <Link href="/">Produkte ansehen</Link>.
+        </p>
+      )}
+
+
+
+  </main>);
 }
