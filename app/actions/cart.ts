@@ -42,4 +42,19 @@ export async function addToCartAction(formData: FormData) {
   redirect("/cart");
 }
 
-//fehlend: removeFromCartAction, setCartItemQuantityAction
+export async function removeFromCartAction(formData: FormData) {
+  // Welche item soll deleted werden
+  const itemId = formData.get("itemId");
+  if (typeof itemId !== "string" || !itemId) return;
+  await removeFromCart(itemId);
+  revalidatePath("/cart");
+}
+
+export async function updateCartQuantityAction(formData: FormData) {
+  const itemId = formData.get("itemId");
+  const quantityRaw = formData.get("quantity");
+  if (typeof itemId !== "string" || !itemId) return;
+  const quantity = Math.max(0, Number(quantityRaw) || 0);
+  await setCartItemQuantity(itemId, quantity);
+  revalidatePath("/cart");
+}
