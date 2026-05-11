@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { addToCartAction } from "@/app/actions/cart";
 
 const eur = new Intl.NumberFormat("de-DE", {
   style: "currency",
@@ -33,7 +34,8 @@ export default async function ProductDetail({
       <p>{eur.format(Number(product.price))}</p>
       <p>{product.description}</p>
 
-      <form>
+      <form action={addToCartAction}>
+        <input type="hidden" name="productId" value={product.id} />
         <label htmlFor="variantId">Variante</label>
         <select id="variantId" name="variantId" required>
           {product.variants.length === 0 && (
