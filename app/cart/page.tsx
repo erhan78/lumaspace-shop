@@ -88,6 +88,12 @@ export default async function CartPage() {
             })}
           </ul>
 
+          {/* Gesamtsumme */}
+          <p>Summe: {eur.format(total)}</p>
+
+          {/* Checkout */}
+          <Link href="/checkout">Zur Kasse</Link>
+
         </>   
       )}
   </main>);
