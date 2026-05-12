@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Inter_Tight, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import Header from "@/components/Header";
 import "./globals.css";
 
 const inter = Inter({
@@ -42,6 +43,7 @@ export default function RootLayout({
         <body
           className={`${inter.variable} ${interTight.variable} ${instrument.variable} ${mono.variable} antialiased`}
         >
+          <Header />
           {children}
         </body>
       </html>
