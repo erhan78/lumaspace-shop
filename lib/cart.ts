@@ -61,6 +61,24 @@ async function writeCartScope(): Promise<CartScope> {
 //MergeGuestCartIntoUser: Wenn sich ein Gast-Nutzer einloggt, werden seine Cart-Items mit seinem Nutzerkonto verbunden.
 
 
+//Summe aller Mengen im aktuellen Cart.
+export async function getCartCount() {
+  const scope = await readCartScope();
+  if (!scope) return 0;
+
+  const items = await prisma.cartItem.findMany({
+    where: scope,
+    select: { quantity: true },
+  });
+
+  let total = 0;
+  for (const item of items) {
+    total += item.quantity;
+  }
+
+  return total;
+}
+
 //In DB suchen, was für Cart-Items zum aktuellen Scope gehören.
 export async function getCart() {
   const scope = await readCartScope();
