@@ -1,4 +1,10 @@
 import Link from "next/link";
+import {
+  Show,
+  SignInButton,
+  SignUpButton,
+  UserButton,
+} from "@clerk/nextjs";
 import { getCartCount } from "@/lib/cart";
 
 // Header wird auf jeder Seite angezeigt.
@@ -18,6 +24,21 @@ export default async function Header() {
           Warenkorb
           {cartCount > 0 && <span> ({cartCount})</span>}
         </Link>
+
+        {/* Wenn nicht eingeloggt: Sign-In / Sign-Up Buttons */}
+        <Show when="signed-out">
+          <SignInButton mode="modal">
+            <button type="button">Anmelden</button>
+          </SignInButton>
+          <SignUpButton mode="modal">
+            <button type="button">Registrieren</button>
+          </SignUpButton>
+        </Show>
+
+        {/* Wenn eingeloggt: Avatar mit Dropdown (Profile, Logout) */}
+        <Show when="signed-in">
+          <UserButton />
+        </Show>
       </nav>
     </header>
   );
