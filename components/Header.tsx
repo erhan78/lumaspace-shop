@@ -12,11 +12,13 @@ export default async function Header() {
   const cartCount = await getCartCount();
 
   return (
-    <header>
+    <header className="flex items-center justify-between border-b px-6 py-4">
       {/* Logo / Startseite */}
-      <Link href="/">Lumaspace</Link>
+      <Link href="/" className="text-lg font-medium">
+        Lumaspace
+      </Link>
 
-      <nav>
+      <nav className="flex items-center gap-4">
         <Link href="/">Shop</Link>
 
         {/* Warenkorb mit Anzahl in Klammern, wenn was drin ist */}
