@@ -48,4 +48,6 @@ export async function createPendingOrder(input: CreateOrderInput) {
       items: true,
     },
   });
+
+  return order;
 }
